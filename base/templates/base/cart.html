@@ -1,0 +1,17 @@
+<h1>Cart</h1>
+<a href="{% url 'items' %}">Items</a>
+{% for item in cart_items %}
+<form method="POST" action="">
+    {% csrf_token %}
+    <h3>{{item.product.name}}</h3>
+    <h5>{{item.product.price}}</h5>
+    <input type="number" step="1" min="0" value={{item.quantity}} name="inputQuant">
+    <input type="hidden" value={{item}} name="updateItem">
+    <input type="submit" value="Add to Cart" name="add_cart">
+</form>
+<form method="POST" action="">
+    {% csrf_token %}
+    <input type="hidden" value={{item}} name="updateItem">
+    <input type="submit" value="remove" name="remove">
+</form>
+{% endfor %}

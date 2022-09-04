@@ -1,0 +1,56 @@
+<h1>Items</h1>
+<a href="{% url 'cart' %}">Cart</a>
+
+{% if request.user.username == "joaquin" %}
+<form method="POST" action="">
+  {% csrf_token %}
+  <input type="text" placeholder="item name..." name="name" />
+  <input
+    type="number"
+    step="0.01"
+    min="0.00"
+    max="999999.99"
+    placeholder="20.99"
+    name="price"
+  />
+  <input type="submit" value="Submit" name="create-item" />
+</form>
+{% endif %}
+
+<style>
+  .items {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+  }
+
+  .item-info {
+    margin-right: 20px;
+    margin-top: 21px;
+  }
+  .sizes {
+    display: flex;
+  }
+</style>
+
+{% for item in items %}
+<div class="items">
+  <div class="item-info">
+    <h2>{{ item.name }}</h2>
+    <h4>{{ item.price }}</h4>
+    <div class="sizes">
+      <input type="text" name="hidden_value" />
+      <input type="checkbox" name="checkbox">
+      <input type="submit" value="submit"
+    </div>
+  </div>
+  <div class="add-to-cart">
+    <form method="POST" action="" name="add-cart">
+      {% csrf_token %}
+      <input type="hidden" value={{ item.name }} name="item" />
+      <input type="submit" value="Add to cart" />
+    </form>
+  </div>
+</div>
+{% endfor %}
