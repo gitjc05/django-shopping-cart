@@ -1,56 +1,102 @@
-<h1>Items</h1>
-<a href="{% url 'cart' %}">Cart</a>
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Items</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <h1>Items</h1>
+    <a href="{% url 'cart' %}">Cart</a>
 
-{% if request.user.username == "joaquin" %}
-<form method="POST" action="">
-  {% csrf_token %}
-  <input type="text" placeholder="item name..." name="name" />
-  <input
-    type="number"
-    step="0.01"
-    min="0.00"
-    max="999999.99"
-    placeholder="20.99"
-    name="price"
-  />
-  <input type="submit" value="Submit" name="create-item" />
-</form>
-{% endif %}
+    {% if request.user.username == "joaquin" %}
+    <form method="POST" action="">
+      {% csrf_token %}
+      <input type="text" placeholder="item name..." name="name" />
+      <input
+        type="number"
+        step="0.01"
+        min="0.00"
+        max="999999.99"
+        placeholder="20.99"
+        name="price"
+      />
+      <input type="submit" value="Submit" name="create-item" />
+    </form>
+    {% endif %}
 
-<style>
-  .items {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 200px;
-  }
+    <style>
+      .items {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 200px;
+      }
 
-  .item-info {
-    margin-right: 20px;
-    margin-top: 21px;
-  }
-  .sizes {
-    display: flex;
-  }
-</style>
+      .item-info {
+        margin-right: 20px;
+        margin-top: 21px;
+      }
+      .sizes {
+        display: flex;
+      }
+    </style>
 
-{% for item in items %}
-<div class="items">
-  <div class="item-info">
-    <h2>{{ item.name }}</h2>
-    <h4>{{ item.price }}</h4>
-    <div class="sizes">
-      <input type="text" name="hidden_value" />
-      <input type="checkbox" name="checkbox">
-      <input type="submit" value="submit"
-    </div>
-  </div>
-  <div class="add-to-cart">
+    {% for item in items %}
     <form method="POST" action="" name="add-cart">
       {% csrf_token %}
-      <input type="hidden" value={{ item.name }} name="item" />
-      <input type="submit" value="Add to cart" />
+      <div class="items">
+        <div class="item-info">
+          <h2>{{ item.name }}</h2>
+          <h4>{{ item.price }}</h4>
+          <div class="sizes">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% for x in item.sizes %}
+              <label class="btn btn-secondary radio">
+                <input
+                  type="radio"
+                  name={{x}}
+                  id="option1"
+                  autocomplete="off"
+                />
+                {{x}}
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="add-to-cart">
+
+            <input type="hidden" value={{ item.name }} name="item" />
+            <input type="submit" value="Add to cart" />
+        </div>
+      </div>
     </form>
-  </div>
-</div>
-{% endfor %}
+    {% endfor %}
+
+    <script src="{% static 'js/app.js' %}"></script>
+  </body>
+</html>

@@ -46,12 +46,9 @@ def items(request):
     try:
         user_id = request.COOKIES["user_id"]
         set_cook_usr = "".join(set_cook_usr)
-        print(request.COOKIES["user_id"])
     except KeyError:
         set_cook_usr = "".join(set_cook_usr)
         response.set_cookie("user_id", set_cook_usr)
-        user_id = request.COOKIES["user_id"]
-        print(request.COOKIES["user_id"])
         return response
     if request.method == "POST":
         name1 = request.POST.get("item")
@@ -63,18 +60,24 @@ def items(request):
                 
             return response
         else:
-            if models.UserItem.objects.filter(name1=name1, user=user_id):
-                quant2 = models.UserItem.objects.filter(name1=name1).get(user=user_id)
+            size = ""
+            for x in l_form(models.Product.objects.get(name=name1).sizes):
+                if request.POST.get(x) == "on":
+                    size = x
+            print(request.POST.get("options"))
+            if models.UserItem.objects.filter(name1=name1, user=user_id, size=size):
+                quant2 = models.UserItem.objects.get(name1=name1, user=user_id, size=size)
                 quant1 = quant2.quantity + 1
 
-                models.UserItem.objects.filter(name1=name1).filter(user=user_id).update(quantity=quant1)
+                models.UserItem.objects.filter(name1=name1, user=user_id, size=size).update(quantity=quant1)
             else:
                 models.UserItem.objects.create(
                     user=user_id,
                     name1=models.Product.objects.get(name=request.POST.get("item")).name,
-                    product=models.Product.objects.get(name=request.POST.get("item"))
+                    product=models.Product.objects.get(name=request.POST.get("item")),
+                    size=size
                 )
-            return response
+            return redirect("items")
     return response
 
 def cart(request):
@@ -89,16 +92,14 @@ def cart(request):
             user_item = request.POST.get("updateItem")
             user_id = request.COOKIES["user_id"]
             newquant = int(request.POST.get("inputQuant"))
-            models.UserItem.objects.filter(user=user_id).filter(name1=user_item).update(quantity=newquant)
+            size = request.POST.get("size")
+            models.UserItem.objects.filter(name1=user_item, user=user_id, size=size).update(quantity=newquant)
             return redirect("cart")
 
         if "remove" in request.POST:
-            print("deleting")
             user_id = request.COOKIES["user_id"]
-            print("found user")
             user_item = request.POST.get("updateItem")
-            print("found user item")
-            models.UserItem.objects.filter(user=user_id).filter(name1=user_item).delete()
-            print("deleted")
+            size = request.POST.get("size")
+            models.UserItem.objects.filter(user=user_id, name1=user_item, size=size).delete()
             return redirect("cart")
     return render(request, "base/cart.html", context)
